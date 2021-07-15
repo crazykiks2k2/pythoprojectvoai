@@ -1,0 +1,302 @@
+from tkinter import *
+from textblob import TextBlob
+from PIL import ImageTk
+import pyttsx3
+import datetime
+import speech_recognition as sr
+import wikipedia as wk
+import subprocess
+
+engine = pyttsx3.init()
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+    
+
+def query_process():
+    
+    def take_query():
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            try:
+                text_var.set('Listening....')
+                r.pause_threshold=1
+                audio = r.listen(source)
+                text_var.set('Recognizing....')
+                query = r.recognize_google(audio)
+                
+            except:
+                pass
+        
+        return query
+
+    
+    def take_command():
+    
+
+        r = sr.Recognizer()
+        wish_me()
+        with sr.Microphone() as source:
+            try:
+                text_var.set('Listening....')
+                r.pause_threshold=1
+                audio = r.listen(source)
+                text_var.set('Recognizing....')
+                query = r.recognize_google(audio)
+                
+            except:
+                pass
+        
+        return query
+
+        
+    while True:
+        
+        query_rec = take_command().lower()
+        print(query_rec)
+        if "time" in query_rec:
+            time()
+            break
+        
+        elif "date" in query_rec:
+            date()
+            break
+            
+        elif "wikipedia" in query_rec:
+            speak("Searching....")
+            query_rec = query_rec.replace("wikipedia", " ")
+            result = wk.summary(query_rec, sentences=2)
+            speak(result)
+            break
+        
+        elif "remember" in query_rec:
+            speak("what should i remember?")
+            data=take_query()
+            speak("you said me to remember" + data)
+            remember=open("data1.txt","w")
+            remember.write(data)
+            remember.close()
+            
+        
+        elif "do you know anything" in query_rec:
+            remember=open("data1.txt","r")
+            speak("you said me to remember that " + remember.read())
+            break
+            
+        elif "check" in query_rec:
+            def check():
+                giv_word = e.get()
+                cor_word = TextBlob(giv_word)
+                corrected_text = Label(root, text=str(cor_word.correct()))
+                corrected_text.pack()
+
+            root = Tk()
+            root.title('SpellCheck')
+            root.geometry('400x200')
+
+            head = Label(root, text='SpellCheck',font=('helvetica', 14 , 'bold'))
+            head.pack()
+            e = Entry(root, width=200,borderwidth=5)
+            e.pack()
+            b = Button(root, text = 'Check', font=('helvetica', 8 , 'bold'), fg = 'white', bg = 'brown', command = check)
+            b.pack()
+            root.mainloop()
+                    
+            break
+        
+        elif "browser" in query_rec:
+            def app():
+                subprocess.call("C://Program Files (x86)//Microsoft//Edge//Application//msedge.exe")
+            app()
+            break
+        
+        
+            
+
+        elif "calculator" in query_rec:
+            def btn_click(numbers):
+                global operator
+                operator = operator + str(numbers)
+                text_input.set(operator)
+
+            def btn_clear():
+                global operator
+                operator = ""
+                text_input.set("")
+
+            def btn_equals():
+                global operator
+                sum_up = str(eval(operator))
+                text_input.set(sum_up)
+                operator = ""
+
+            calc = Toplevel()
+            calc.title("Calculator")
+
+            text_display = Entry(calc, font=('arial', 20, 'bold'), textvariable=text_input, bd=30, insertwidth=4,
+                                    bg='powder blue', justify='right').grid(columnspan=4)
+
+            # =============================================FIRST ROW==========================================================================#
+            button_7 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='7',
+                                bg='powder blue', command=lambda: btn_click(7)).grid(row=1, column=0)
+
+            button_8 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='8',
+                                bg='powder blue', command=lambda: btn_click(8)).grid(row=1, column=1)
+
+            button_9 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='9',
+                                bg='powder blue', command=lambda: btn_click(9)).grid(row=1, column=2)
+
+            addition_button = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='+',
+                                        bg='powder blue', command=lambda: btn_click('+')).grid(row=1, column=3)
+
+            # ===============================================SECOND ROW==========================================================================#
+
+            button_4 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='4',
+                                bg='powder blue', command=lambda: btn_click(4)).grid(row=2, column=0)
+
+            button_5 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='5',
+                                bg='powder blue', command=lambda: btn_click(5)).grid(row=2, column=1)
+
+            button_6 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='6',
+                                bg='powder blue', command=lambda: btn_click(6)).grid(row=2, column=2)
+
+            subtraction_button = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'),
+                                        text='-',
+                                        bg='powder blue', command=lambda: btn_click('-')).grid(row=2, column=3)
+
+            # ===============================================THIRD ROW==========================================================================#
+
+            button_3 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='3',
+                                bg='powder blue', command=lambda: btn_click(3)).grid(row=3, column=0)
+
+            button_2 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='2',
+                                bg='powder blue', command=lambda: btn_click(2)).grid(row=3, column=1)
+
+            button_1 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='1',
+                                bg='powder blue', command=lambda: btn_click(1)).grid(row=3, column=2)
+
+            multiplication_button = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'),
+                                            text='*', bg='powder blue', command=lambda: btn_click('*')).grid(row=3,
+                                                                                                            column=3)
+
+            # ===============================================THIRD ROW==========================================================================#
+
+            button_0 = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='0',
+                                bg='powder blue', command=lambda: btn_click(0)).grid(row=4, column=0)
+
+            button_clear = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='Clr',
+                                    bg='powder blue', command=btn_clear).grid(row=4, column=1)
+
+            button_equals = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='=',
+                                    bg='powder blue', command=btn_equals).grid(row=4, column=2)
+
+            division_button = Button(calc, padx=16, pady=16, bd=8, fg='black', font=('arial', 20, 'bold'), text='/',
+                                        bg='powder blue', command=lambda: btn_click('/')).grid(row=4, column=3)
+            break
+
+        elif "turn off" in query_rec:
+            quit()
+
+
+
+
+def time():
+    time_outp = datetime.datetime.now().strftime("%I:%M:%S")
+    speak(time_outp)
+    
+
+
+
+
+    
+
+def date():
+    year_outp = int(datetime.datetime.now().year)
+    month_outp = int(datetime.datetime.now().month)
+    date_outp = int(datetime.datetime.now().day)
+    speak("The current date is")
+    speak(date_outp)
+    speak(month_outp)
+    speak(year_outp)
+
+
+def wish_me():
+    speak("Welcome back sir!")
+    hour = datetime.datetime.now().hour
+
+    if 6 <= hour < 12:
+        speak("Good morning")
+    elif 12 <= hour < 18:
+        speak("Good afternoon")
+    elif 18 <= hour <= 24:
+        speak("Good evening")
+    else:
+        speak("Good night")
+    speak("How can I help you?")
+
+
+root = Tk()
+mic_window = Toplevel()
+mic_window.geometry('800x450')
+mic_window.title("Mini Voice Assistant")
+mic_window.iconbitmap('icon.ico')
+mic_window.config(bg='lightgrey')
+mic_window.resizable(0, 0)
+operator = ""
+text_input = StringVar()
+text_var = StringVar()
+
+mic_window.bg = ImageTk.PhotoImage(file='back.jpg')
+mic_window.bg_image = Label(mic_window, image=mic_window.bg).place(x=0, y=0, relwidth=1, relheight=1)
+
+canvas=Canvas(mic_window,width=399,height=120)
+canvas.place(x=190,y=6)
+photoi=PhotoImage(file='logo.png')
+canvas.create_image(0,0,anchor=NW,image=photoi)
+
+queryLabel = Label(mic_window, text='SPEAK', font=('helvetica', 12, 'bold'), bg='#f7f732')
+queryLabel.place(x=360, y=150)
+
+text_var.set('')
+lbl_var = Label(mic_window, textvariable=text_var, font='helvetica 10 bold', bg='lightgrey')
+lbl_var.place(x=320, y=230, width=150)
+
+micImage = PhotoImage(file='mic.png')
+micButton = Button(mic_window, image=micImage, command=query_process, bg='lightgrey', bd=0, cursor='hand2',
+                   activebackground='lightgrey')
+micButton.place(x=375, y=184)
+
+
+
+
+
+querycalc = Label(mic_window, text='Calculator-"calculator"', font=('arial', 16, 'bold'), bg='white')
+querycalc.place(x=20, y=200)
+
+querycheck = Label(mic_window, text='Spell Checker-"check"', font=('arial', 16, 'bold'), bg='white')
+querycheck.place(x=20, y=260)
+
+querywiki = Label(mic_window, text='Wikipedia -"wikipedia <search>"', font=('arial', 16, 'bold'), bg='white')
+querywiki.place(x=20, y=320)
+
+querybrowse = Label(mic_window, text='Microsoft Edge -"browser"', font=('arial', 16, 'bold'), bg='white')
+querybrowse.place(x=20, y=380)
+
+querytime = Label(mic_window, text='Time-"time"', font=('arial', 16, 'bold'), bg='white')
+querytime.place(x=550, y=200)
+
+querydate = Label(mic_window, text='Date-"date"', font=('arial', 16, 'bold'), bg='white')
+querydate.place(x=550, y=260)
+
+queryrem = Label(mic_window, text='Remember-"rem"', font=('arial', 16, 'bold'), bg='white')
+queryrem.place(x=550, y=320)
+
+
+
+
+
+
+root.withdraw()
+root.mainloop()
